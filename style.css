@@ -1,0 +1,33 @@
+body{
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container{
+    width: 500px;
+    height: 500px;
+    border: solid green;
+    border-radius: 20px;
+    background-color: green;
+    box-shadow: 2px 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board{
+    width: 400px;
+    height: 400px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.cell{
+    border: solid white;
+    height: auto;
+    width: 130px;
+
+}

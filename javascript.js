@@ -28,7 +28,6 @@ const controller = (function gameController(){
     let currentPlayer = p1;
     let gameOver = false;
     let isTie = false;
-    let isFull = false;
     const boardArray = Board.getBoard();
     function playTurn(row, col) {
         
@@ -75,7 +74,6 @@ const controller = (function gameController(){
                 [[0, 2], [1, 1], [2, 0]],
                 ];
                 for (let combo of winningCombinations) {
-                    console.log(winningCombinations[combo]);
                     const [a, b, c] = combo;
                     if (boardArray[a[0]][a[1]] === boardArray[b[0]][b[1]] &&
                       boardArray[b[0]][b[1]] === boardArray[c[0]][c[1]] && 
@@ -89,35 +87,35 @@ const controller = (function gameController(){
                       }
                 }
     }
-    function checkTie(){
-        if (gameOver) {
-                return;
-            }
-        for (let i = 0; i < boardArray.length; i++) {  
-            for (let j = 0; j <  boardArray.length; j++) {
-                if (boardArray[i][j] === ""){
+        function checkTie(){
+            if (gameOver) {
                     return;
-                } 
-            }
-            }
-            isTie = true;
-            gameOver= true;
-            console.log("We've reached a TIE!");
-            console.log("Game OVER!!")
-        
-    }
+                }
+            for (let i = 0; i < boardArray.length; i++) {  
+                for (let j = 0; j <  boardArray.length; j++) {
+                    if (boardArray[i][j] === ""){
+                        return;
+                    } 
+                }
+                }
+                isTie = true;
+                gameOver= true;
+                console.log("We've reached a TIE!");
+                console.log("Game OVER!!")
+            
+        }
     return {playTurn, getCurrentPlayer};
 })();
 
 controller.playTurn(0,0);
-controller.playTurn(1,1);
 controller.playTurn(0,1);
 controller.playTurn(1,0);
-controller.playTurn(2,1);
-controller.playTurn(0,2);
-controller.playTurn(1,2);
-controller.playTurn(2,2);
+controller.playTurn(1,1);
 controller.playTurn(2,0);
+
+
+const boardUI = document.querySelector(".board");
+const celss = document.querySelectorAll(".cell");
 
 
 
