@@ -113,8 +113,11 @@ const controller = (function gameController(){
         function getisTie(){
             return isTie;
         }
+        function setisTie(state) {
+            isTie = state;
+        }
 
-    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie};
+    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie, setisTie};
 })();
 const cells = document.querySelectorAll(".cell");
 
@@ -122,29 +125,29 @@ const Display = (function() {
     const board = Board.getBoard();
     function update() {
         for(let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board.length; j++) {
-                    const index = i * board[i].length + j; // Convert 2D to 1D index
+            for (let j = 0; j < board.length; j++) {   
+                    const index = i * board[i].length + j; // Convert 2D to 1D index  
                     cells[index].addEventListener("click", () => {
-                    if (!controller.getGameOver()) {
+                    if (controller.getGameOver()) {
+                        return;
+                    } 
                     controller.playTurn(i,j);
-                    cells[index].innerHTML = board[i][j];  
-                     } else {
-                        if (controller.getisTie()){
-                            alert("It's a TIE!!");
-                            return;
-                        } else {
-                            alert(controller.getCurrentPlayer().name + " WON!");
-                            return;
-                        } 
+                    cells[index].innerHTML = board[i][j]; 
+                    if (controller.getGameOver()) {
+                        Results.showResults(); 
+                        return;
                     }      
-                })
+                })                    
             }
         }
-    }
-     return {cells, update};
+}
+     return {update};
 })();
 
+
 Display.update();
+
+
 
 const restart = document.querySelector("#restart");
 const Restart = (function () {
@@ -160,8 +163,25 @@ const Restart = (function () {
                     }
                  }
                 controller.setGameOver(false);
+                displayResults.classList.remove("show");
         })}     
         return {remove};
 })();
 
 Restart.remove();
+
+const displayResults = document.querySelector(".display-results");
+const Results = (function (){
+    function showResults(){
+        if(controller.getGameOver()) {
+        displayResults.classList.add("show");
+        if (controller.getisTie()) {
+            displayResults.innerHTML = "It's A TIE!!";
+            controller.setisTie(false);
+        } else {
+             displayResults.innerHTML = `${controller.getCurrentPlayer().name}` + " WON!";
+        }      
+     }
+    }
+    return ({showResults});
+})();
