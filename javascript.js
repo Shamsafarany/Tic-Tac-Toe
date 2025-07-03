@@ -104,19 +104,64 @@ const controller = (function gameController(){
                 console.log("Game OVER!!")
             
         }
-    return {playTurn, getCurrentPlayer};
+        function getGameOver(){
+            return gameOver;
+        }
+        function setGameOver(state) {
+            gameOver = state;
+        }
+        function getisTie(){
+            return isTie;
+        }
+
+    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie};
+})();
+const cells = document.querySelectorAll(".cell");
+
+const Display = (function() {
+    const board = Board.getBoard();
+    function update() {
+        for(let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board.length; j++) {
+                    const index = i * board[i].length + j; // Convert 2D to 1D index
+                    cells[index].addEventListener("click", () => {
+                    if (!controller.getGameOver()) {
+                    controller.playTurn(i,j);
+                    cells[index].innerHTML = board[i][j];  
+                     } else {
+                        if (controller.getisTie()){
+                            alert("It's a TIE!!");
+                            return;
+                        } else {
+                            alert(controller.getCurrentPlayer().name + " WON!");
+                            return;
+                        } 
+                    }      
+                })
+            }
+        }
+    }
+     return {cells, update};
 })();
 
-controller.playTurn(0,0);
-controller.playTurn(0,1);
-controller.playTurn(1,0);
-controller.playTurn(1,1);
-controller.playTurn(2,0);
+Display.update();
 
+const restart = document.querySelector("#restart");
+const Restart = (function () {
+    const board = Board.getBoard();
+    function remove(){
+        restart.addEventListener("click", () => {
+            for (let i = 0; i < cells.length; i++) {
+                    cells[i].innerHTML = "";
+                }
+                for (let i = 0; i < board.length; i++) {
+                    for (let j = 0; j < board[i].length; j++) {
+                        board[i][j] = "";
+                    }
+                 }
+                controller.setGameOver(false);
+        })}     
+        return {remove};
+})();
 
-const boardUI = document.querySelector(".board");
-const celss = document.querySelectorAll(".cell");
-
-
-
-
+Restart.remove();
