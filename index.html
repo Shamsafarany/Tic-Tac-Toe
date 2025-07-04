@@ -8,6 +8,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="start">
+        <h2>Let's start!</h2>
+        <form action="" autocomplete="off">
+            <label for="p1">Player 1: </label>
+            <input type="text" placeholder="Enter name" id="p1" name="p1" required>
+            <label for="p2">Player 2: </label>
+            <input type="text" placeholder="Enter name" id="p2" name="p2" required>
+            <button type="submit">Start!</button>
+        </form>
+    </div>
+    <div class="turns"></div>
+    <div class="scores">
+        <div class="p1"></div>
+        <div class="p2"></div>
+    </div>
     <div class="container">
         <div class="board">
             <div class="cell"></div>
@@ -23,9 +38,10 @@
     </div>
     <div class="buttons">
         <button id="restart">Restart</button>
+        <button id="reset"> New Game</button>
     </div>
     <div class="display-results">
-        
+
     </div>
 </body>
 </html>

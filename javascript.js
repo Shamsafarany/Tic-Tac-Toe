@@ -16,21 +16,61 @@ const Board = (function (){
     return {getBoard};
 })();
 
-console.log(Board.getBoard());
-
 function createPlayer(name, sign) {
     return {name,sign};
 }
-const p1 = createPlayer("Hala", 'X');
-const p2 = createPlayer("Noor", 'O');
+const form = document.querySelector("form");
+
+const Name = (function() {
+    let p1 = null;
+    let p2 = null;
+    function getNames(){
+        form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        let player1 = event.target.p1.value;
+        let player2 = event.target.p2.value;
+        player1 = player1.charAt(0).toUpperCase() + player1.slice(1);
+        player2 = player2.charAt(0).toUpperCase() + player2.slice(1);
+        p1 = createPlayer(player1, 'X');
+        p2 = createPlayer(player2, 'O');
+
+        form.classList.add("hidden");
+        controller.startGame();
+        Display.update();
+    })
+    }
+    function getP1(){
+        return p1;
+    }
+    function getP2(){
+        return p2;
+    }
+    
+    return {getP1, getP2, getNames};
+})();
+
+Name.getNames();
+
+const scoreP1 = document.querySelector(".p1");
+const scoreP2 = document.querySelector(".p2");
 
 const controller = (function gameController(){
-    let currentPlayer = p1;
+    let currentPlayer = null;
     let gameOver = false;
     let isTie = false;
+    let p1Score = 0;
+    let p2Score = 0;
     const boardArray = Board.getBoard();
+    function startGame(){
+        currentPlayer = Name.getP1();
+        gameOver = false;
+        isTie = false;
+        turns.innerHTML = `${controller.getCurrentPlayer().name}'s turn`;
+        scoreP1.innerHTML = `${Name.getP1().name}: 0`;
+        scoreP2.innerHTML = `${Name.getP2().name}: 0`;
+    }
+    
     function playTurn(row, col) {
-        
         if (boardArray[row][col] === "") {
             boardArray[row][col] = currentPlayer.sign;
             
@@ -47,10 +87,10 @@ const controller = (function gameController(){
     }
 
     function switchPlayer(){
-        if (currentPlayer === p1) {
-            currentPlayer = p2;
+        if (currentPlayer.name === Name.getP1().name) {
+            currentPlayer = Name.getP2();
         } else {
-            currentPlayer = p1;
+            currentPlayer = Name.getP1();
         }
     }
 
@@ -79,6 +119,11 @@ const controller = (function gameController(){
                       boardArray[b[0]][b[1]] === boardArray[c[0]][c[1]] && 
                       boardArray[a[0]][a[1]] !== "") {
                         console.log(getCurrentPlayer().name + " won");
+                        if (getCurrentPlayer() === Name.getP1()) {
+                            p1Score++;
+                        } else {
+                            p2Score++;
+                        }
                         gameOver = true;
                         if (gameOver) {
                             console.log("Game OVER!!!");
@@ -116,22 +161,30 @@ const controller = (function gameController(){
         function setisTie(state) {
             isTie = state;
         }
+        function getP1Score(){
+            return p1Score;
+        }
+        function getP2Score(){
+            return p2Score;
+        }
 
-    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie, setisTie};
+    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie, setisTie, startGame, getP1Score, getP2Score};
 })();
 const cells = document.querySelectorAll(".cell");
+const turns = document.querySelector(".turns");
 
 const Display = (function() {
     const board = Board.getBoard();
-    function update() {
+    function update(){
         for(let i = 0; i < board.length; i++) {
             for (let j = 0; j < board.length; j++) {   
                     const index = i * board[i].length + j; // Convert 2D to 1D index  
                     cells[index].addEventListener("click", () => {
                     if (controller.getGameOver()) {
                         return;
-                    } 
+                    }
                     controller.playTurn(i,j);
+                    turns.innerHTML = `${controller.getCurrentPlayer().name}'s turn`;
                     cells[index].innerHTML = board[i][j]; 
                     if (controller.getGameOver()) {
                         Results.showResults(); 
@@ -144,12 +197,8 @@ const Display = (function() {
      return {update};
 })();
 
-
-Display.update();
-
-
-
 const restart = document.querySelector("#restart");
+const reset = document.querySelector("#reset");
 const Restart = (function () {
     const board = Board.getBoard();
     function remove(){
@@ -168,7 +217,31 @@ const Restart = (function () {
         return {remove};
 })();
 
+const Reset = (function(){
+    const board = Board.getBoard();
+    function resets(){
+        reset.addEventListener("click", () => {
+            for (let i = 0; i < cells.length; i++) {
+                    cells[i].innerHTML = "";
+                }
+                for (let i = 0; i < board.length; i++) {
+                    for (let j = 0; j < board[i].length; j++) {
+                        board[i][j] = "";
+                    }
+                 }
+                controller.setGameOver(false);
+                controller.setisTie(false);
+                displayResults.classList.remove("show");
+                form.classList.remove("hidden");
+                Display.update();
+                form.reset();
+
+        })}     
+        return {resets};
+    })();
+
 Restart.remove();
+Reset.resets();
 
 const displayResults = document.querySelector(".display-results");
 const Results = (function (){
@@ -180,8 +253,11 @@ const Results = (function (){
             controller.setisTie(false);
         } else {
              displayResults.innerHTML = `${controller.getCurrentPlayer().name}` + " WON!";
+             scoreP1.innerHTML = `${Name.getP1().name}: ${controller.getP1Score()}`;
+            scoreP2.innerHTML = `${Name.getP2().name}: ${controller.getP2Score()}`;
         }      
      }
     }
+    form.classList.remove("hidden");
     return ({showResults});
 })();
