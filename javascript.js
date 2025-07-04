@@ -167,34 +167,48 @@ const controller = (function gameController(){
         function getP2Score(){
             return p2Score;
         }
+        function setP1score(score) {
+            p1Score = score;
+        }
+        function setP2score(score) {
+            p2Score = score;
+        }
 
-    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie, setisTie, startGame, getP1Score, getP2Score};
+
+    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie, setisTie, startGame, getP1Score, getP2Score, setP1score,setP2score};
 })();
+
 const cells = document.querySelectorAll(".cell");
 const turns = document.querySelector(".turns");
 
 const Display = (function() {
     const board = Board.getBoard();
-    function update(){
-        for(let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board.length; j++) {   
-                    const index = i * board[i].length + j; // Convert 2D to 1D index  
-                    cells[index].addEventListener("click", () => {
-                    if (controller.getGameOver()) {
-                        return;
-                    }
-                    controller.playTurn(i,j);
-                    turns.innerHTML = `${controller.getCurrentPlayer().name}'s turn`;
-                    cells[index].innerHTML = board[i][j]; 
-                    if (controller.getGameOver()) {
-                        Results.showResults(); 
-                        return;
-                    }      
-                })                    
-            }
+
+    function handleClick(event) {
+        const cell = event.target;
+        const index = [...cells].indexOf(cell); // convert NodeList to array
+        const row = Math.floor(index / 3);
+        const col = index % 3;
+
+        if (controller.getGameOver()) return;
+
+        controller.playTurn(row, col);
+        cell.innerHTML = board[row][col];
+        turns.innerHTML = `${controller.getCurrentPlayer().name}'s turn`;
+
+        if (controller.getGameOver()) {
+            Results.showResults(); 
         }
-}
-     return {update};
+    }
+
+    function update() {
+        cells.forEach(cell => {
+            cell.removeEventListener("click", handleClick);
+            cell.addEventListener("click", handleClick);
+        });
+    }
+
+    return { update };
 })();
 
 const restart = document.querySelector("#restart");
@@ -233,6 +247,8 @@ const Reset = (function(){
                 controller.setisTie(false);
                 displayResults.classList.remove("show");
                 form.classList.remove("hidden");
+                controller.setP1score(0);
+                controller.setP2score(0);
                 Display.update();
                 form.reset();
 
