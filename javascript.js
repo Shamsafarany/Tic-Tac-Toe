@@ -172,14 +172,9 @@ const controller = (function gameController(){
 })();
 const cells = document.querySelectorAll(".cell");
 const turns = document.querySelector(".turns");
+
 const Display = (function() {
     const board = Board.getBoard();
-    function clearBoardListeners() {
-                for (let i = 0; i < cells.length; i++) {
-                    const newCell = cells[i].cloneNode(true); // clone the cell without any event listeners
-                    cells[i].replaceWith(newCell);            // replace the old cell with the clean one
-                }
-            }
     function update(){
         for(let i = 0; i < board.length; i++) {
             for (let j = 0; j < board.length; j++) {   
@@ -199,7 +194,7 @@ const Display = (function() {
             }
         }
 }
-     return {update, clearBoardListeners};
+     return {update};
 })();
 
 const restart = document.querySelector("#restart");
@@ -238,7 +233,6 @@ const Reset = (function(){
                 controller.setisTie(false);
                 displayResults.classList.remove("show");
                 form.classList.remove("hidden");
-                Display.clearBoardListeners();
                 Display.update();
                 form.reset();
 
