@@ -74,9 +74,35 @@ button{
     display: block;
 }
 
-.X{
-    color: red;
+
+.start{
+    border: solid black;
+    width: 300px;
 }
-.O{
-    color: white;
+
+form{
+    padding: 30px;
+}
+input{
+    padding: 5px;
+     margin: 5px;
+}
+h2{
+    text-align: center;
+    border-bottom: solid black;
+    color: brown;
+}
+label {
+    color: brown;
+}
+form button{
+    margin-left: 80px;
+    margin-top: 20px;
+}
+.hidden{
+    display: none;
+}
+.turns{
+    color: brown;
+    font-size: 30px;
 }
