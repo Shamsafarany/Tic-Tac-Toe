@@ -27,8 +27,10 @@ const Name = (function() {
     function getNames(){
         form.addEventListener("submit", (event) => {
         event.preventDefault();
-        const player1 = event.target.p1.value;
-        const player2 = event.target.p2.value;
+        let player1 = event.target.p1.value;
+        let player2 = event.target.p2.value;
+        player1 = player1.charAt(0).toUpperCase() + player1.slice(1);
+        player2 = player2.charAt(0).toUpperCase() + player2.slice(1);
         p1 = createPlayer(player1, 'X');
         p2 = createPlayer(player2, 'O');
 
@@ -172,6 +174,12 @@ const cells = document.querySelectorAll(".cell");
 const turns = document.querySelector(".turns");
 const Display = (function() {
     const board = Board.getBoard();
+    function clearBoardListeners() {
+                for (let i = 0; i < cells.length; i++) {
+                    const newCell = cells[i].cloneNode(true); // clone the cell without any event listeners
+                    cells[i].replaceWith(newCell);            // replace the old cell with the clean one
+                }
+            }
     function update(){
         for(let i = 0; i < board.length; i++) {
             for (let j = 0; j < board.length; j++) {   
@@ -191,7 +199,7 @@ const Display = (function() {
             }
         }
 }
-     return {update};
+     return {update, clearBoardListeners};
 })();
 
 const restart = document.querySelector("#restart");
@@ -230,7 +238,8 @@ const Reset = (function(){
                 controller.setisTie(false);
                 displayResults.classList.remove("show");
                 form.classList.remove("hidden");
-                Display.updateBoard();
+                Display.clearBoardListeners();
+                Display.update();
                 form.reset();
 
         })}     
