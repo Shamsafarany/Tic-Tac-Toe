@@ -16,8 +16,6 @@ const Board = (function (){
     return {getBoard};
 })();
 
-console.log(Board.getBoard());
-
 function createPlayer(name, sign) {
     return {name,sign};
 }
@@ -51,18 +49,25 @@ const Name = (function() {
 
 Name.getNames();
 
+const scoreP1 = document.querySelector(".p1");
+const scoreP2 = document.querySelector(".p2");
 
 const controller = (function gameController(){
     let currentPlayer = null;
     let gameOver = false;
     let isTie = false;
+    let p1Score = 0;
+    let p2Score = 0;
     const boardArray = Board.getBoard();
     function startGame(){
         currentPlayer = Name.getP1();
         gameOver = false;
         isTie = false;
         turns.innerHTML = `${controller.getCurrentPlayer().name}'s turn`;
+        scoreP1.innerHTML = `${Name.getP1().name}: 0`;
+        scoreP2.innerHTML = `${Name.getP2().name}: 0`;
     }
+    
     function playTurn(row, col) {
         if (boardArray[row][col] === "") {
             boardArray[row][col] = currentPlayer.sign;
@@ -112,6 +117,11 @@ const controller = (function gameController(){
                       boardArray[b[0]][b[1]] === boardArray[c[0]][c[1]] && 
                       boardArray[a[0]][a[1]] !== "") {
                         console.log(getCurrentPlayer().name + " won");
+                        if (getCurrentPlayer() === Name.getP1()) {
+                            p1Score++;
+                        } else {
+                            p2Score++;
+                        }
                         gameOver = true;
                         if (gameOver) {
                             console.log("Game OVER!!!");
@@ -149,8 +159,14 @@ const controller = (function gameController(){
         function setisTie(state) {
             isTie = state;
         }
+        function getP1Score(){
+            return p1Score;
+        }
+        function getP2Score(){
+            return p2Score;
+        }
 
-    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie, setisTie, startGame};
+    return {playTurn, getCurrentPlayer, getGameOver, setGameOver, getisTie, setisTie, startGame, getP1Score, getP2Score};
 })();
 const cells = document.querySelectorAll(".cell");
 const turns = document.querySelector(".turns");
@@ -234,6 +250,8 @@ const Results = (function (){
             controller.setisTie(false);
         } else {
              displayResults.innerHTML = `${controller.getCurrentPlayer().name}` + " WON!";
+             scoreP1.innerHTML = `${Name.getP1().name}: ${controller.getP1Score()}`;
+            scoreP2.innerHTML = `${Name.getP2().name}: ${controller.getP2Score()}`;
         }      
      }
     }
